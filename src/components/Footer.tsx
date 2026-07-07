@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
 import { Logo } from './Logo';
@@ -5,6 +6,9 @@ import { InstagramIcon, TikTokIcon, TwitterIcon, WhatsAppIcon } from './Icons';
 import { NAV_LINKS, WHATSAPP, INSTAGRAM, TIKTOK, TWITTER, EMAIL, PHONE, PHONE_DISPLAY, EMAIL_DISPLAY } from '../constants';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
   const socials = [
     { href: WHATSAPP,  icon: <WhatsAppIcon className="w-4 h-4" />,   color: '#25D366' },
     { href: INSTAGRAM, icon: <InstagramIcon className="w-4 h-4" />,  color: '#e1306c' },
@@ -71,26 +75,65 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="font-serif text-white/80 mb-5 text-sm tracking-widest uppercase">Contact</h4>
-            <ul className="space-y-3">
-              <li>
-                <a href={PHONE} className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors">
-                  <Phone className="w-3.5 h-3.5 flex-shrink-0" /> {PHONE_DISPLAY}
-                </a>
-              </li>
-              <li>
-                <a href={EMAIL} className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors break-all">
-                  <Mail className="w-3.5 h-3.5 flex-shrink-0" /> {EMAIL_DISPLAY}
-                </a>
-              </li>
-              <li>
-                <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors">
-                  <InstagramIcon className="w-3.5 h-3.5 flex-shrink-0" /> @beccaknotery
-                </a>
-              </li>
-            </ul>
+          {/* Contact + subscribe */}
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-serif text-white/80 mb-5 text-sm tracking-widest uppercase">Contact</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a href={PHONE} className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors">
+                    <Phone className="w-3.5 h-3.5 flex-shrink-0" /> {PHONE_DISPLAY}
+                  </a>
+                </li>
+                <li>
+                  <a href={EMAIL} className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors break-all">
+                    <Mail className="w-3.5 h-3.5 flex-shrink-0" /> {EMAIL_DISPLAY}
+                  </a>
+                </li>
+                <li>
+                  <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/40 text-sm hover:text-[#f0d080] transition-colors">
+                    <InstagramIcon className="w-3.5 h-3.5 flex-shrink-0" /> @beccaknotery
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <p className="text-white/70 text-sm mb-3">Join our circle for exclusive drops, styling tips, and first access to new crochet releases.</p>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    setStatus('error');
+                    return;
+                  }
+                  setStatus('success');
+                  setEmail('');
+                }}
+                className="flex flex-col gap-3"
+              >
+                <label className="sr-only" htmlFor="subscribe-email">Email address</label>
+                <input
+                  id="subscribe-email"
+                  type="email"
+                  value={email}
+                  onChange={e => {
+                    setEmail(e.target.value);
+                    setStatus('idle');
+                  }}
+                  placeholder="Enter your email"
+                  className="w-full rounded-2xl border border-white/10 bg-[#09010f] px-4 py-3 text-sm text-white outline-none ring-2 ring-transparent transition focus:border-[#f0d080] focus:ring-[#f0d080]/30"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#c9a84c] to-[#f0d080] px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:opacity-95"
+                >
+                  Subscribe
+                </button>
+              </form>
+              {status === 'success' && <p className="text-emerald-300 text-sm mt-3">Thanks! We'll email you as soon as the next launch is ready.</p>}
+              {status === 'error' && <p className="text-rose-300 text-sm mt-3">Please enter a valid email address.</p>}
+            </div>
           </div>
         </div>
 
